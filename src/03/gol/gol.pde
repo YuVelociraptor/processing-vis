@@ -89,14 +89,18 @@ void mousePressed() {
     int i = x / w;
     int j = y / w;
     
-    if(current[i][j] == 1){
+    if(!(i == 0 || j == 0 || i == columns-1 || j == rows-1)){
       
-      current[i][j] = 0;
+      if(current[i][j] == 1){
       
-    }else{
+        current[i][j] = 0;
       
-      current[i][j] = 1;
+      }else{
+      
+        current[i][j] = 1;
+      }
     }
+
   }
 }
 
@@ -104,10 +108,14 @@ void randomCells() {
   for (int i = 0; i < columns; i++) {
     for (int j = 0; j < rows; j++) {
 
-      if (i == 0 || j == 0 || i == columns-1 || j == rows-1) current[i][j] = 0;
-
-      else current[i][j] = floor(random(2));
-      next[i][j] = 0;
+      if (i == 0 || j == 0 || i == columns-1 || j == rows-1){
+      
+        current[i][j] = 0;
+        
+      }else{
+        current[i][j] = floor(random(2));
+        next[i][j] = 0;
+      }
     }
   }
 }
