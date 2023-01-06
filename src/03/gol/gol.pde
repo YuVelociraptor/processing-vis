@@ -19,21 +19,29 @@ void setup() {
   current = new int[columns][rows];
   next = new int[columns][rows];
   
-  buttons[0] = new Button(100, height - 80, 100, 50, color(100, 200, 200));
-  buttons[1] = new Button(250, height - 80, 100, 50, color(100, 200, 255));
+  buttons[0] = new Button(300, height - 80, 100, 50, color(100, 200, 200), "Start");
+  buttons[1] = new Button(450, height - 80, 100, 50, color(100, 200, 255), "Random");
 }
 
 void draw() {
   background(255);
   
   if(isPlaying){
+    
     generate();
+    
+    fill(0, 255, 200);
+    text("Playing", 50, height - 80);
+    
+  }else{
+    
+    fill(255, 100, 100);
+    text("Stopped", 50, height - 80);
   }
   
   for(Button b: buttons){
     b.renderShape();
   }
- 
   
   // Render Current
   for(int i = 0; i < columns; i++) {
@@ -52,7 +60,6 @@ void draw() {
 
 }
 
-// reset current when mouse is pressed
 void mousePressed() {
 
   int x = mouseX;
@@ -62,19 +69,43 @@ void mousePressed() {
     
     isPlaying = !isPlaying;
     
+    if(isPlaying){
+      
+      buttons[0].bText = "Stop";
+      
+    }else{
+      
+      buttons[0].bText = "Start";
+    }
+    
+    buttons[1].enable = !isPlaying;
+    
   }else if(!isPlaying && buttons[1].isClicked(x, y)){
     
     randomCells();
+    
+  }else if(!isPlaying){
+    
+    int i = x / w;
+    int j = y / w;
+    
+    if(current[i][j] == 1){
+      
+      current[i][j] = 0;
+      
+    }else{
+      
+      current[i][j] = 1;
+    }
   }
 }
 
-// Fill current randomly
 void randomCells() {
   for (int i = 0; i < columns; i++) {
     for (int j = 0; j < rows; j++) {
-      // Lining the edges with 0s
+
       if (i == 0 || j == 0 || i == columns-1 || j == rows-1) current[i][j] = 0;
-      // Filling the rest randomly
+
       else current[i][j] = floor(random(2));
       next[i][j] = 0;
     }
@@ -83,10 +114,9 @@ void randomCells() {
 
 void generate() {
 
-  // Loop through every spot in our 2D array and check spots neighbors
   for (int x = 1; x < columns - 1; x++) {
     for (int y = 1; y < rows - 1; y++) {
-      // Add up all the states in a 3x3 surrounding grid
+
       int neighbors = 0;
       for (int i = -1; i <= 1; i++) {
         for (int j = -1; j <= 1; j++) {
@@ -94,18 +124,30 @@ void generate() {
         }
       }
 
-      // A little trick to subtract the current cell's state since
-      // we added it in the above loop
       neighbors -= current[x][y];
-      // Rules of Life
-      if      ((current[x][y] == 1) && (neighbors <  2)) next[x][y] = 0;           // Loneliness
-      else if ((current[x][y] == 1) && (neighbors >  3)) next[x][y] = 0;           // Overpopulation
-      else if ((current[x][y] == 0) && (neighbors == 3)) next[x][y] = 1;           // Reproduction
-      else                                             next[x][y] = current[x][y]; // Stasis
+      
+      if(
+        current[x][y] == 1 && (
+          neighbors < 2 ||
+          neighbors >  3
+        )
+      ){
+        
+        next[x][y] = 0;
+        
+      }else if(current[x][y] == 0 && neighbors == 3){
+        
+        next[x][y] = 1;
+        
+      }else{
+        
+        next[x][y] = current[x][y];
+      }
+
     }
   }
 
-  // Swap!
+  // Swap
   int[][] temp = current;
   current = next;
   next = temp;
