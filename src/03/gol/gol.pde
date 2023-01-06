@@ -6,7 +6,7 @@ int[][] next;
 
 boolean isPlaying = false;
 
-Button[] buttons = new Button[2];
+Button[] buttons = new Button[3];
 
 void setup() {
   size(1200, 700);
@@ -21,6 +21,7 @@ void setup() {
   
   buttons[0] = new Button(300, height - 80, 100, 50, color(100, 200, 200), "Start");
   buttons[1] = new Button(450, height - 80, 100, 50, color(100, 200, 255), "Random");
+  buttons[2] = new Button(600, height - 80, 100, 50, color(255, 100, 100), "Clear");
 }
 
 void draw() {
@@ -65,6 +66,9 @@ void mousePressed() {
   int x = mouseX;
   int y = mouseY;
   
+  int i = x / w;
+  int j = y / w;
+  
   if(buttons[0].isClicked(x, y)){
     
     isPlaying = !isPlaying;
@@ -78,27 +82,29 @@ void mousePressed() {
       buttons[0].bText = "Start";
     }
     
-    buttons[1].enable = !isPlaying;
+    for(int cnt = 1; cnt < buttons.length; cnt++){
+      
+      buttons[cnt].enable = !isPlaying;
+    }
+    
     
   }else if(!isPlaying && buttons[1].isClicked(x, y)){
     
     randomCells();
     
-  }else if(!isPlaying){
+  }else if(!isPlaying && buttons[2].isClicked(x, y)){
     
-    int i = x / w;
-    int j = y / w;
+    clearCells();
     
-    if(!(i == 0 || j == 0 || i == columns-1 || j == rows-1)){
+  }else if(!isPlaying && !(i == 0 || j == 0 || i == columns-1 || j == rows-1)){
+
+    if(current[i][j] == 1){
       
-      if(current[i][j] == 1){
+      current[i][j] = 0;
       
-        current[i][j] = 0;
+    }else{
       
-      }else{
-      
-        current[i][j] = 1;
-      }
+      current[i][j] = 1;
     }
 
   }
@@ -116,6 +122,16 @@ void randomCells() {
         current[i][j] = floor(random(2));
         next[i][j] = 0;
       }
+    }
+  }
+}
+
+void clearCells() {
+  
+  for (int i = 0; i < columns; i++) {
+    for (int j = 0; j < rows; j++) {
+      current[i][j] = 0;
+      next[i][j] = 0;
     }
   }
 }
