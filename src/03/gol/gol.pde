@@ -9,8 +9,8 @@ boolean isPlaying = false;
 Button[] buttons = new Button[3];
 
 void setup() {
-  size(1200, 700);
-  w = 30;
+  size(1400, 800);
+  w = 10;
 
   // Calculate columns and rows
   columns = floor(width/w);
